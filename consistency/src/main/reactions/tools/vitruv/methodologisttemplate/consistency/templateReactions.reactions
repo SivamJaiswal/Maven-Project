@@ -1,6 +1,3 @@
-
-import java.io.File;
-
 import "http://vitruv.tools/methodologisttemplate/model" as model
 import "http://vitruv.tools/methodologisttemplate/model2" as model2
 
@@ -8,153 +5,146 @@ reactions: model2Model2
 in reaction to changes in model
 execute actions in model2
 
-// insert a System, which is the root element of model, into an instance of model
-// as a reaction, an element of type Root should be created, persisted relatively, 
-// and a correspondence should be added (see the called routine)
-reaction SystemInsertedAsRoot {
-	after element model::System inserted as root
-  // newValue refers to the newly inserted element of type System (provided by the reactions runtime environment at runtime)
-	call createAndRegisterRoot(newValue)
+
+// Man (model) ↔ Father (model2)
+// A Man inserted into a Family gets a corresponding Father.
+
+// Man added to Family.men → create Father in model2
+reaction ManInserted {
+	after element model::Man inserted in model::Family[men]
+	call createFather(newValue)
 }
 
-routine createAndRegisterRoot(model::System system) {
+// Create Father, add correspondence
+routine createFather(model::Man man) {
 	match {
-    // we do only want to create a new corresponding Root if we not have one already and the old one has, e.g., only been moved
-		require absence of model2::Root corresponding to system
-	}
-  create {
-    // short way of using the respective Factory calls, which would be used in the update-block
-    val mRoot = new model2::Root
-  }
-	update {
-    // save the newly created Root element at the specified location
-    persistProjectRelative(system, mRoot, new File("").toString() + "example.model2")
-    // register the correspondence so we can find mRoot later, if we modify something in system and need to adapt mRoot accordingly
-		addCorrespondenceBetween(system, mRoot)
-	}
-}
-
-// a Component is mapped to an Entity in model2.
-reaction ComponentInsertedIntoSystem {
-  // the brackets [ ] are used to denote a reference inside a metaclass (see model.ecore line 23 in the model project)
-	after element model::Component inserted in model::System[components]
-	call createAndInsertEntity(affectedEObject, newValue)
-}
-
-routine createAndInsertEntity(model::System system, model::Component component) {
-	match {
-		require absence of model2::Entity corresponding to component
-    // retrieve the mRoot we added a correspondence in the createAndRegisterRoot routine in the update block (line 33 in this file)
-    val mRoot = retrieve model2::Root corresponding to system
-	}
-  create {
-    val entity = new model2::Entity
-  }
-	update {
-    entity.name = component.name
-    mRoot.entities.add(entity)
-		addCorrespondenceBetween(component, entity)
-	}
-}
-
-// we replaced a single-valued attribute value, in this case the name of a component, with a new name.
-reaction ComponentRenamed {
-	after attribute replaced at model::Component[name]
-  // affectedEObject refers to the modified element (provided by the reactions runtime environment at runtime). The change is already applied, so affectedEObject.name is the new name. alternatively, we could use newValue to get the name.
-	call renameEntity(affectedEObject)
-}
-
-routine renameEntity(model::Component component) {
-	match {
-    val entity = retrieve model2::Entity corresponding to component
-	}
-  // we can omit blocks like the update block if we do not need them
-	update {
-    entity.name = component.name
-	}
-}
-
-reaction ComponentDeleted {
-	after element model::Component deleted
-	call deleteEntity(affectedEObject)
-}
-
-routine deleteEntity(model::Component component) {
-	match {
-		val entity = retrieve model2::Entity corresponding to component
-	}
-	update {
-    // remove the corresponding object as well
-		removeObject(entity)
-    // cleanup of the correspondence model so it does not contain links to invalid, i.e., deleted, model elements
-		removeCorrespondenceBetween(entity, component)
-	}
-}
-
-reaction ProtocolInsertedIntoSystem {
-    after element model::Protocol inserted in model::System[protocols]
-    call createAndInsertProtocol(affectedEObject, newValue)
-}
-
-routine createAndInsertProtocol(model::System system, model::Protocol protocol) {
-    match {
-        require absence of model2::CommunicationStandard corresponding to protocol
-        val mRoot = retrieve model2::Root corresponding to system
-    }
-    create {
-        val mStandard = new model2::CommunicationStandard
-    }
-    update {
-    	mStandard.name = protocol.name
-    	addCorrespondenceBetween(protocol, mStandard)
-    }
-}
-
-reaction LinkInsertedIntoSystem {
-	after element model::Link inserted in model::System[links]
-	call createAndInsertLink(affectedEObject, newValue)
-}
-
-routine createAndInsertLink(model::System system, model::Link link) {
-	match {
-		require absence of model2::Link corresponding to link
-		val mRoot = retrieve model2::Root corresponding to system
+		require absence of model2::Father corresponding to man
 	}
 	create {
-		val mLink = new model2::Link
+		val father = new model2::Father
 	}
 	update {
-		mRoot.links.add(mLink)
-		addCorrespondenceBetween(link, mLink)
+		father.name = man.name
+		father.age = man.age
+		persistProjectRelative(man, father, "father_" + man.name + ".model2")
+		addCorrespondenceBetween(man, father)
 	}
 }
 
-reaction ComponentInsertedIntoLink {
-	after element model::Component inserted in model::Link[components]
-	call updateLinkEntities(affectedEObject, newValue)
+// Man.Name changed → sync Father.name
+reaction ManNameChanged {
+	after attribute replaced at model::Man[Name]
+	call updateFatherName(affectedEObject)
 }
 
-routine updateLinkEntities(model::Link link, model::Component component) {
+routine updateFatherName(model::Man man) {
 	match {
-		val mEntity = retrieve model2::Entity corresponding to component
-		val mLink = retrieve model2::Link corresponding to link
+		val father = retrieve model2::Father corresponding to man
 	}
 	update {
-		mLink.entities.add(mEntity)
+		father.name = man.name
 	}
 }
 
-reaction ProtocolInsertedIntoLink {
-	after element model::Protocol replaced at model::Link[protocol]
-	call updateLinkProtocols(affectedEObject, newValue)
+// Man.Age changed → sync Father.age
+reaction ManAgeChanged {
+	after attribute replaced at model::Man[Age]
+	call updateFatherAge(affectedEObject)
 }
 
-routine updateLinkProtocols(model::Link link, model::Protocol protocol) {
+routine updateFatherAge(model::Man man) {
 	match {
-		val mStandard = retrieve model2::CommunicationStandard corresponding to protocol
-		val mLink = retrieve model2::Link corresponding to link
+		val father = retrieve model2::Father corresponding to man
 	}
 	update {
-		mLink.standard = mStandard
+		father.age = man.age
+	}
+}
+
+// Man deleted → remove Father and correspondence
+reaction ManDeleted {
+	after element model::Man deleted
+	call deleteFather(affectedEObject)
+}
+
+routine deleteFather(model::Man man) {
+	match {
+		val father = retrieve model2::Father corresponding to man
+	}
+	update {
+		removeObject(father)
+		removeCorrespondenceBetween(man, father)
+	}
+}
+
+
+// Woman (model) ↔ Mother (model2)
+// A Woman inserted into a Family gets a corresponding Mother.
+
+// Woman added to Family.women → create Mother in model2
+reaction WomanInserted {
+	after element model::Woman inserted in model::Family[women]
+	call createMother(newValue)
+}
+
+// Create Mother, add correspondence
+routine createMother(model::Woman woman) {
+	match {
+		require absence of model2::Mother corresponding to woman
+	}
+	create {
+		val mother = new model2::Mother
+	}
+	update {
+		mother.name = woman.name
+		mother.age = woman.age
+		persistProjectRelative(woman, mother, "mother_" + woman.name + ".model2")
+		addCorrespondenceBetween(woman, mother)
+	}
+}
+
+// Woman.Name changed → sync Mother.name
+reaction WomanNameChanged {
+	after attribute replaced at model::Woman[Name]
+	call updateMotherName(affectedEObject)
+}
+
+routine updateMotherName(model::Woman woman) {
+	match {
+		val mother = retrieve model2::Mother corresponding to woman
+	}
+	update {
+		mother.name = woman.name
+	}
+}
+
+// Woman.Age changed → sync Mother.age
+reaction WomanAgeChanged {
+	after attribute replaced at model::Woman[Age]
+	call updateMotherAge(affectedEObject)
+}
+
+routine updateMotherAge(model::Woman woman) {
+	match {
+		val mother = retrieve model2::Mother corresponding to woman
+	}
+	update {
+		mother.age = woman.age
+	}
+}
+
+// Woman deleted → remove Mother and correspondence
+reaction WomanDeleted {
+	after element model::Woman deleted
+	call deleteMother(affectedEObject)
+}
+
+routine deleteMother(model::Woman woman) {
+	match {
+		val mother = retrieve model2::Mother corresponding to woman
+	}
+	update {
+		removeObject(mother)
+		removeCorrespondenceBetween(woman, mother)
 	}
 }

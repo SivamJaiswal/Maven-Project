@@ -10,24 +10,20 @@
   <testsDirectory xsi:nil="true"/>
   <genPackages prefix="Model" basePackage="tools.vitruv.methodologisttemplate.model"
       disposableProviderFactory="true" ecorePackage="model.ecore#/">
-    <genClasses ecoreClass="model.ecore#//Component">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Component/name"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Component/supportedProtocols"/>
+    <genClasses ecoreClass="model.ecore#//Family">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Family/men"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Family/women"/>
     </genClasses>
-    <genClasses ecoreClass="model.ecore#//Link">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Link/components"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Link/protocol"/>
+    <genClasses ecoreClass="model.ecore#//People">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//People/Type"/>
     </genClasses>
-    <genClasses ecoreClass="model.ecore#//Protocol">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Protocol/name"/>
+    <genClasses ecoreClass="model.ecore#//Man">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Man/Name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Man/Age"/>
     </genClasses>
-    <genClasses ecoreClass="model.ecore#//Device"/>
-    <genClasses ecoreClass="model.ecore#//Server"/>
-    <genClasses ecoreClass="model.ecore#//System">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//System/links"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//System/components"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//System/protocols"/>
+    <genClasses ecoreClass="model.ecore#//Woman">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Woman/Name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Woman/Age"/>
     </genClasses>
-    <genClasses ecoreClass="model.ecore#//Router"/>
   </genPackages>
 </genmodel:GenModel>
