@@ -13,13 +13,13 @@ Workflow {
     }
 
     component = EcoreGenerator {
-        genModel = "platform:/resource/tools.vitruv.methodologisttemplate.model/src/main/ecore/model.genmodel"
+        genModel = "platform:/resource/tools.vitruv.methodologisttemplate.model/src/main/ecore/family.genmodel"
         srcPath = "platform:/resource/tools.vitruv.methodologisttemplate.model/target/generated-sources/ecore"
         generateCustomClasses = false
     }
 
     component = EcoreGenerator {
-        genModel = "platform:/resource/tools.vitruv.methodologisttemplate.model/src/main/ecore/model2.genmodel"
+        genModel = "platform:/resource/tools.vitruv.methodologisttemplate.model/src/main/ecore/people.genmodel"
         srcPath = "platform:/resource/tools.vitruv.methodologisttemplate.model/target/generated-sources/ecore"
         generateCustomClasses = false
     }

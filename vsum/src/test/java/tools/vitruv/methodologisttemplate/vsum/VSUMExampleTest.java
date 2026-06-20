@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import mir.reactions.model2Model2.Model2Model2ChangePropagationSpecification;
+import mir.reactions.familyPeople.FamilyPeopleChangePropagationSpecification;
 import tools.vitruv.change.propagation.ChangePropagationMode;
 import tools.vitruv.change.testutils.TestUserInteraction;
 import tools.vitruv.framework.views.CommittableView;
@@ -24,15 +24,15 @@ import tools.vitruv.framework.vsum.VirtualModel;
 import tools.vitruv.framework.vsum.VirtualModelBuilder;
 import tools.vitruv.framework.vsum.internal.InternalVirtualModel;
 
-// model(source) : Family contains Man and Woman
-import tools.vitruv.methodologisttemplate.model.model.Family;
-import tools.vitruv.methodologisttemplate.model.model.Man;
-import tools.vitruv.methodologisttemplate.model.model.ModelFactory;
-import tools.vitruv.methodologisttemplate.model.model.Woman;
+// people (source): Family contains Man and Woman
+import tools.vitruv.methodologisttemplate.model.people.Family;
+import tools.vitruv.methodologisttemplate.model.people.Man;
+import tools.vitruv.methodologisttemplate.model.people.PeopleFactory;
+import tools.vitruv.methodologisttemplate.model.people.Woman;
 
-// model2(target): Father and Mother are the corresponding objects
-import tools.vitruv.methodologisttemplate.model.model2.Father;
-import tools.vitruv.methodologisttemplate.model.model2.Mother;
+// family (target): Father and Mother are the corresponding objects
+import tools.vitruv.methodologisttemplate.model.family.Father;
+import tools.vitruv.methodologisttemplate.model.family.Mother;
 
 
 public class VSUMExampleTest {
@@ -44,8 +44,6 @@ public class VSUMExampleTest {
                 .put("*", new XMIResourceFactoryImpl());
     }
 
-    // Initialization ──────────────────────────────────────────────────
-
     // Verify the VSUM can be created, disposed, and restarted without errors
     @Test
     void reloadEmptyVirtualModel(@TempDir Path tempDir) {
@@ -54,7 +52,7 @@ public class VSUMExampleTest {
         vsum = createDefaultVirtualModel(tempDir);
     }
 
-    // Verify model state persists across VSUM restart 
+    // Verify model state persists across VSUM restart
     @Test
     void reloadFilledVirtualModel(@TempDir Path tempDir) {
         InternalVirtualModel vsum = createDefaultVirtualModel(tempDir);
@@ -64,7 +62,7 @@ public class VSUMExampleTest {
         vsum.dispose();
         vsum = createDefaultVirtualModel(tempDir);
 
-        // After reload: Family still has 1 Man, Father still exists in model2
+        // After reload: Family still has 1 Man, Father still exists in family
         Assertions.assertEquals(1,
                 getView(vsum, List.of(Family.class)).getRootObjects(Family.class)
                         .iterator().next().getMen().size());
@@ -72,9 +70,9 @@ public class VSUMExampleTest {
                 getView(vsum, List.of(Father.class)).getRootObjects(Father.class).size());
     }
 
-    // Insertion tests 
+    // Insertion tests
 
-    // When a Man is added to a Family, a Father with the same Name+Age must appear in model2
+    // When a Man is added to a Family, a Father with the same Name+Age must appear in family
     @Test
     void manInsertedCreatesFather(@TempDir Path tempDir) {
         VirtualModel vsum = createDefaultVirtualModel(tempDir);
@@ -86,13 +84,12 @@ public class VSUMExampleTest {
                             .iterator().next().getMen().get(0);
                     Father father = v.getRootObjects(Father.class)
                             .iterator().next();
-                    // Father must mirror Man's Name and Age
                     return man.getName().equals(father.getName())
                             && man.getAge() == father.getAge();
                 }));
     }
 
-    // When a Woman is added to a Family, a Mother with the same Name+Age must appear in model2
+    // When a Woman is added to a Family, a Mother with the same Name+Age must appear in family
     @Test
     void womanInsertedCreatesMother(@TempDir Path tempDir) {
         VirtualModel vsum = createDefaultVirtualModel(tempDir);
@@ -104,7 +101,6 @@ public class VSUMExampleTest {
                             .iterator().next().getWomen().get(0);
                     Mother mother = v.getRootObjects(Mother.class)
                             .iterator().next();
-                    // Mother must mirror Woman's Name and Age
                     return woman.getName().equals(mother.getName())
                             && woman.getAge() == mother.getAge();
                 }));
@@ -120,14 +116,12 @@ public class VSUMExampleTest {
 
         final String newName = "UpdatedJohn";
 
-        // Change Man's name on the model side 
         modifyView(
                 getView(vsum, List.of(Family.class)).withChangeDerivingTrait(), v -> {
                     v.getRootObjects(Family.class).iterator().next()
                             .getMen().get(0).setName(newName);
                 });
 
-        // Both Man and Father must now have the updated name
         Assertions.assertTrue(assertView(
                 getView(vsum, List.of(Family.class, Father.class)), v -> {
                     String manName = v.getRootObjects(Family.class)
@@ -144,14 +138,12 @@ public class VSUMExampleTest {
         VirtualModel vsum = createDefaultVirtualModel(tempDir);
         addFamily(vsum, tempDir);
 
-        // Change Woman's age on the model side
         modifyView(
                 getView(vsum, List.of(Family.class)).withChangeDerivingTrait(), v -> {
                     v.getRootObjects(Family.class).iterator().next()
                             .getWomen().get(0).setAge(99);
                 });
 
-        // Both Woman and Mother must now have age 99
         Assertions.assertTrue(assertView(
                 getView(vsum, List.of(Family.class, Mother.class)), v -> {
                     int womanAge = v.getRootObjects(Family.class)
@@ -162,41 +154,37 @@ public class VSUMExampleTest {
                 }));
     }
 
-    // Delete tests 
+    // Delete tests
 
-    // When all Men are deleted from Family, all Fathers must be removed from model2
+    // When all Men are deleted from Family, all Fathers must be removed from family
     @Test
     void manDeleteRemovesFather(@TempDir Path tempDir) {
         VirtualModel vsum = createDefaultVirtualModel(tempDir);
         addFamily(vsum, tempDir);
 
-        // Clear the men list 
         modifyView(
                 getView(vsum, List.of(Family.class)).withChangeDerivingTrait(), v -> {
                     v.getRootObjects(Family.class).iterator().next()
                             .getMen().clear();
                 });
 
-        // model2 must now have no Father objects
         Assertions.assertTrue(assertView(
                 getView(vsum, List.of(Father.class)), v ->
                         v.getRootObjects(Father.class).isEmpty()));
     }
 
-    // When all Women are removed from Family, all Mothers must be removed from model2
+    // When all Women are removed from Family, all Mothers must be removed from family
     @Test
     void womanDeleteRemovesMother(@TempDir Path tempDir) {
         VirtualModel vsum = createDefaultVirtualModel(tempDir);
         addFamily(vsum, tempDir);
 
-        // Clear the women list 
         modifyView(
                 getView(vsum, List.of(Family.class)).withChangeDerivingTrait(), v -> {
                     v.getRootObjects(Family.class).iterator().next()
                             .getWomen().clear();
                 });
 
-        // model2 must now have no Mother objects
         Assertions.assertTrue(assertView(
                 getView(vsum, List.of(Mother.class)), v ->
                         v.getRootObjects(Mother.class).isEmpty()));
@@ -204,38 +192,33 @@ public class VSUMExampleTest {
 
     // Helper methods
 
-    
     private void addFamily(VirtualModel vsum, Path path) {
         modifyView(
                 getView(vsum, List.of(Family.class)).withChangeDerivingTrait(), v -> {
-                    Family family = ModelFactory.eINSTANCE.createFamily();
+                    Family family = PeopleFactory.eINSTANCE.createFamily();
 
-                    Man man = ModelFactory.eINSTANCE.createMan();
+                    Man man = PeopleFactory.eINSTANCE.createMan();
                     man.setName("John");
                     man.setAge(45);
                     family.getMen().add(man);
 
-                    Woman woman = ModelFactory.eINSTANCE.createWoman();
+                    Woman woman = PeopleFactory.eINSTANCE.createWoman();
                     woman.setName("Anna");
                     woman.setAge(42);
                     family.getWomen().add(woman);
 
-                    // Register as a root resource — gives the Family a URI on disk
                     v.registerRoot(family,
                             URI.createFileURI(path.toString() + "/family.model"));
                 });
     }
 
-     //Builds a fresh VSUM 
-     //TRANSITIVE_CYCLIC mode so reactions can trigger further reactions
-    
     private InternalVirtualModel createDefaultVirtualModel(Path projectPath) {
         InternalVirtualModel model = new VirtualModelBuilder()
                 .withStorageFolder(projectPath)
                 .withUserInteractorForResultProvider(
                         new TestUserInteraction.ResultProvider(new TestUserInteraction()))
                 .withChangePropagationSpecifications(
-                        new Model2Model2ChangePropagationSpecification())
+                        new FamilyPeopleChangePropagationSpecification())
                 .buildAndInitialize();
         model.setChangePropagationMode(ChangePropagationMode.TRANSITIVE_CYCLIC);
         return model;
@@ -250,13 +233,11 @@ public class VSUMExampleTest {
         return selector.createView();
     }
 
-    //Applies changes to a view and commits them to the VSUM.
     private void modifyView(CommittableView view, Consumer<CommittableView> fn) {
         fn.accept(view);
-        view.commitChanges(); // ← reactions fire here
+        view.commitChanges();
     }
 
-    // Runs an assertion lambda against a view and returns the boolean result
     private boolean assertView(View view, Function<View, Boolean> fn) {
         return fn.apply(view);
     }

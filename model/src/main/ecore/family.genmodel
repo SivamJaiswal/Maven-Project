@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/tools.vitruv.methodologisttemplate.model/target/generated-sources/ecore" modelPluginID="tools.vitruv.methodologisttemplate.model"
+    modelName="Family" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="17.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>family.ecore</foreignModel>
+  <genPackages prefix="Family" basePackage="tools.vitruv.methodologisttemplate.model" disposableProviderFactory="true" ecorePackage="family.ecore#/">
+    <genClasses ecoreClass="family.ecore#//FamilyRegister">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference family.ecore#//FamilyRegister/fathers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference family.ecore#//FamilyRegister/mothers"/>
+    </genClasses>
+    <genClasses ecoreClass="family.ecore#//Father">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute family.ecore#//Father/Name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute family.ecore#//Father/Age"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference family.ecore#//Father/children"/>
+    </genClasses>
+    <genClasses ecoreClass="family.ecore#//Mother">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute family.ecore#//Mother/Name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute family.ecore#//Mother/Age"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference family.ecore#//Mother/children"/>
+    </genClasses>
+    <genClasses ecoreClass="family.ecore#//Children"/>
+    <genClasses ecoreClass="family.ecore#//Son">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute family.ecore#//Son/Name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute family.ecore#//Son/Age"/>
+    </genClasses>
+    <genClasses ecoreClass="family.ecore#//Daughter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute family.ecore#//Daughter/Name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute family.ecore#//Daughter/Age"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model2" nsURI="http://vitruv.tools/methodologisttemplate/model2"
-    nsPrefix="model2">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="family" nsURI="http://vitruv.tools/methodologisttemplate/family"
+    nsPrefix="family">
   <eClassifiers xsi:type="ecore:EClass" name="FamilyRegister">
     <eStructuralFeatures xsi:type="ecore:EReference" name="fathers" upperBound="-1"
         eType="#//Father" containment="true"/>

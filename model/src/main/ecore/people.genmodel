@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/tools.vitruv.methodologisttemplate.model/target/generated-sources/ecore" modelPluginID="tools.vitruv.methodologisttemplate.model"
+    modelName="People" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="17.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>people.ecore</foreignModel>
+  <genPackages prefix="People" basePackage="tools.vitruv.methodologisttemplate.model" disposableProviderFactory="true" ecorePackage="people.ecore#/">
+    <genClasses ecoreClass="people.ecore#//Family">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference people.ecore#//Family/men"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference people.ecore#//Family/women"/>
+    </genClasses>
+    <genClasses ecoreClass="people.ecore#//People">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute people.ecore#//People/Type"/>
+    </genClasses>
+    <genClasses ecoreClass="people.ecore#//Man">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute people.ecore#//Man/Name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute people.ecore#//Man/Age"/>
+    </genClasses>
+    <genClasses ecoreClass="people.ecore#//Woman">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute people.ecore#//Woman/Name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute people.ecore#//Woman/Age"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

@@ -1,45 +1,45 @@
-import "http://vitruv.tools/methodologisttemplate/model" as model
-import "http://vitruv.tools/methodologisttemplate/model2" as model2
+import "http://vitruv.tools/methodologisttemplate/people" as people
+import "http://vitruv.tools/methodologisttemplate/family" as family
 
-reactions: model2Model2
-in reaction to changes in model
-execute actions in model2
+reactions: familyPeople
+in reaction to changes in people
+execute actions in family
 
-
-// Man (model) ↔ Father (model2)
+// Man (people) ↔ Father (family)
 // A Man inserted into a Family gets a corresponding Father.
+// Man added to Family.men → create Father in family
 
-// Man added to Family.men → create Father in model2
 reaction ManInserted {
-	after element model::Man inserted in model::Family[men]
+	after element people::Man inserted in people::Family[men]
 	call createFather(newValue)
 }
 
 // Create Father, add correspondence
-routine createFather(model::Man man) {
+
+routine createFather(people::Man man) {
 	match {
-		require absence of model2::Father corresponding to man
+		require absence of family::Father corresponding to man
 	}
 	create {
-		val father = new model2::Father
+		val father = new family::Father
 	}
 	update {
 		father.name = man.name
 		father.age = man.age
-		persistProjectRelative(man, father, "father_" + man.name + ".model2")
+		persistProjectRelative(man, father, "father_" + man.name + ".family")
 		addCorrespondenceBetween(man, father)
 	}
 }
 
 // Man.Name changed → sync Father.name
+
 reaction ManNameChanged {
-	after attribute replaced at model::Man[Name]
+	after attribute replaced at people::Man[Name]
 	call updateFatherName(affectedEObject)
 }
-
-routine updateFatherName(model::Man man) {
+routine updateFatherName(people::Man man) {
 	match {
-		val father = retrieve model2::Father corresponding to man
+		val father = retrieve family::Father corresponding to man
 	}
 	update {
 		father.name = man.name
@@ -47,14 +47,14 @@ routine updateFatherName(model::Man man) {
 }
 
 // Man.Age changed → sync Father.age
+
 reaction ManAgeChanged {
-	after attribute replaced at model::Man[Age]
+	after attribute replaced at people::Man[Age]
 	call updateFatherAge(affectedEObject)
 }
-
-routine updateFatherAge(model::Man man) {
+routine updateFatherAge(people::Man man) {
 	match {
-		val father = retrieve model2::Father corresponding to man
+		val father = retrieve family::Father corresponding to man
 	}
 	update {
 		father.age = man.age
@@ -62,14 +62,14 @@ routine updateFatherAge(model::Man man) {
 }
 
 // Man deleted → remove Father and correspondence
+
 reaction ManDeleted {
-	after element model::Man deleted
+	after element people::Man deleted
 	call deleteFather(affectedEObject)
 }
-
-routine deleteFather(model::Man man) {
+routine deleteFather(people::Man man) {
 	match {
-		val father = retrieve model2::Father corresponding to man
+		val father = retrieve family::Father corresponding to man
 	}
 	update {
 		removeObject(father)
@@ -77,41 +77,41 @@ routine deleteFather(model::Man man) {
 	}
 }
 
-
-// Woman (model) ↔ Mother (model2)
+// Woman (people) ↔ Mother (family)
 // A Woman inserted into a Family gets a corresponding Mother.
+// Woman added to Family.women → create Mother in family
 
-// Woman added to Family.women → create Mother in model2
 reaction WomanInserted {
-	after element model::Woman inserted in model::Family[women]
+	after element people::Woman inserted in people::Family[women]
 	call createMother(newValue)
 }
 
 // Create Mother, add correspondence
-routine createMother(model::Woman woman) {
+
+routine createMother(people::Woman woman) {
 	match {
-		require absence of model2::Mother corresponding to woman
+		require absence of family::Mother corresponding to woman
 	}
 	create {
-		val mother = new model2::Mother
+		val mother = new family::Mother
 	}
 	update {
 		mother.name = woman.name
 		mother.age = woman.age
-		persistProjectRelative(woman, mother, "mother_" + woman.name + ".model2")
+		persistProjectRelative(woman, mother, "mother_" + woman.name + ".family")
 		addCorrespondenceBetween(woman, mother)
 	}
 }
 
 // Woman.Name changed → sync Mother.name
+
 reaction WomanNameChanged {
-	after attribute replaced at model::Woman[Name]
+	after attribute replaced at people::Woman[Name]
 	call updateMotherName(affectedEObject)
 }
-
-routine updateMotherName(model::Woman woman) {
+routine updateMotherName(people::Woman woman) {
 	match {
-		val mother = retrieve model2::Mother corresponding to woman
+		val mother = retrieve family::Mother corresponding to woman
 	}
 	update {
 		mother.name = woman.name
@@ -119,14 +119,14 @@ routine updateMotherName(model::Woman woman) {
 }
 
 // Woman.Age changed → sync Mother.age
+
 reaction WomanAgeChanged {
-	after attribute replaced at model::Woman[Age]
+	after attribute replaced at people::Woman[Age]
 	call updateMotherAge(affectedEObject)
 }
-
-routine updateMotherAge(model::Woman woman) {
+routine updateMotherAge(people::Woman woman) {
 	match {
-		val mother = retrieve model2::Mother corresponding to woman
+		val mother = retrieve family::Mother corresponding to woman
 	}
 	update {
 		mother.age = woman.age
@@ -134,14 +134,14 @@ routine updateMotherAge(model::Woman woman) {
 }
 
 // Woman deleted → remove Mother and correspondence
+
 reaction WomanDeleted {
-	after element model::Woman deleted
+	after element people::Woman deleted
 	call deleteMother(affectedEObject)
 }
-
-routine deleteMother(model::Woman woman) {
+routine deleteMother(people::Woman woman) {
 	match {
-		val mother = retrieve model2::Mother corresponding to woman
+		val mother = retrieve family::Mother corresponding to woman
 	}
 	update {
 		removeObject(mother)

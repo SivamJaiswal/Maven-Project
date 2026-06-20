@@ -22,4 +22,20 @@
             genModel="src/main/ecore/model2.genmodel"/>
    </extension>
 
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated family -->
+      <package
+            uri="http://vitruv.tools/methodologisttemplate/family"
+            class="tools.vitruv.methodologisttemplate.model.family.FamilyPackage"
+            genModel="src/main/ecore/family.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated people -->
+      <package
+            uri="http://vitruv.tools/methodologisttemplate/people"
+            class="tools.vitruv.methodologisttemplate.model.people.PeoplePackage"
+            genModel="src/main/ecore/people.genmodel"/>
+   </extension>
+
 </plugin>
